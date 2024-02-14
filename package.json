@@ -2,7 +2,7 @@
   "name": "graphql-crash-course",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js"
@@ -13,10 +13,13 @@
   "type": "module",
   "dependencies": {
     "@apollo/server": "^4.10.0",
+    "apollo-server": "^3.13.0",
     "graphql": "^16.8.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

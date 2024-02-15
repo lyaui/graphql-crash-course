@@ -2,21 +2,26 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 // import db from './db';
 // import { typeDefs } from './schema';
+// 在此設定資料的關聯，related data
 const typeDefs = `#graphql
   type Game {
     id: ID!
     title: String!
     platform: [String!]!
+    reviews: [Review!] # 可以是 [] 但不能是 [{}]
   }
   type Review {
     id: ID!
     rating: Int!
     content: String!
+    game: Game!
+    author: Author!
   }
   type Author {
     id: ID!
     name: String!
     verified: Boolean!
+    reviews: [Review!]
   }
   # must to have
   type Query {
@@ -69,6 +74,25 @@ const resolvers = {
         },
         author(parent, args, context) {
             return db.authors.find((_author) => _author.id === args.id);
+        },
+    },
+    Game: {
+        reviews(parent) {
+            // parent 指的是 Game
+            return db.reviews.filter((_review) => _review.game_id === parent.id);
+        },
+    },
+    Author: {
+        reviews(parent) {
+            return db.reviews.filter((_review) => _review.author_id === parent.id);
+        },
+    },
+    Review: {
+        game(parent) {
+            return db.games.find((_game) => _game.id === parent.game_id);
+        },
+        author(parent) {
+            return db.authors.find((_author) => _author.id === parent.author_id);
         },
     },
 };

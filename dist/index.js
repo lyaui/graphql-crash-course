@@ -21,8 +21,11 @@ const typeDefs = `#graphql
   # must to have
   type Query {
     reviews:[Review]
+    review(id: ID!): Review
     games:[Game]
+    game(id: ID!): Game
     authors:[Author]
+    author(id: ID!): Author
   }
 `;
 let games = [
@@ -52,11 +55,20 @@ const resolvers = {
         games() {
             return db.games;
         },
+        game(parent, args, context) {
+            return db.games.find((_game) => _game.id === args.id);
+        },
         reviews() {
             return db.reviews;
         },
+        review(parent, args, context) {
+            return db.reviews.find((_review) => _review.id === args.id);
+        },
         authors() {
             return db.authors;
+        },
+        author(parent, args, context) {
+            return db.authors.find((_author) => _author.id === args.id);
         },
     },
 };

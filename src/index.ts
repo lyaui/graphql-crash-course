@@ -34,6 +34,15 @@ const typeDefs = `#graphql
     authors:[Author]
     author(id: ID!): Author
   }
+  type Mutation {
+    addGame(game: AddGameInput!): Game
+    deleteGame(id: ID!): [Game!]
+  }
+  # input https:graphql.org/graphql-js/mutations-and-input-types/
+  input AddGameInput {
+    title: String
+    platform: [String!]!
+  }
 `;
 
 let games = [
@@ -83,6 +92,7 @@ const resolvers = {
       return db.authors.find((_author) => _author.id === args.id);
     },
   },
+  // related data
   Game: {
     reviews(parent) {
       // parent 指的是 Game
@@ -100,6 +110,20 @@ const resolvers = {
     },
     author(parent) {
       return db.authors.find((_author) => _author.id === parent.author_id);
+    },
+  },
+  Mutation: {
+    addGame(_, args) {
+      const game = {
+        ...args.game,
+        id: Math.floor(Math.random() * 1000).toString(),
+      };
+      db.games.push(game);
+      return game;
+    },
+    deleteGame(_, args) {
+      db.games = db.games.filter((_game) => _game.id !== args.id);
+      return db.games;
     },
   },
 };

@@ -34,12 +34,17 @@ const typeDefs = `#graphql
   }
   type Mutation {
     addGame(game: AddGameInput!): Game
+    editGame(id: ID!, game: EditGameInput!): Game
     deleteGame(id: ID!): [Game!]
   }
   # input https:graphql.org/graphql-js/mutations-and-input-types/
   input AddGameInput {
-    title: String
+    title: String!
     platform: [String!]!
+  }
+  input EditGameInput {
+    title: String
+    platform: [String!]
   }
 `;
 let games = [
@@ -113,6 +118,15 @@ const resolvers = {
             };
             db.games.push(game);
             return game;
+        },
+        editGame(_, args) {
+            db.games = db.games.map((_game) => {
+                if (_game.id === args.id) {
+                    return { ..._game, ...args.game };
+                }
+                return _game;
+            });
+            return db.games.find((_game) => _game.id === args.id);
         },
         deleteGame(_, args) {
             db.games = db.games.filter((_game) => _game.id !== args.id);
